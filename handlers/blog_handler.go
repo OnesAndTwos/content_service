@@ -1,42 +1,22 @@
 package handlers
 
 import (
-	"content_service/models"
+	"content_service/repositories"
 	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 //BlogHandler handles GET requests for Blogs
 func BlogHandler(w http.ResponseWriter, r *http.Request) {
-	session, err := mgo.Dial("localhost")
+	blogRepository := repositories.NewBlogRepository()
+	defer blogRepository.Close()
 
-	vars := mux.Vars(r)
-	reference := vars["reference"]
+	reference := mux.Vars(r)["reference"]
 
-	if err != nil {
-		panic(err)
-	}
-
-	defer session.Close()
-
-	session.SetMode(mgo.Monotonic, true)
-
-	c := session.DB("content_service").C("Blogs")
-
-	blog := models.Blog{}
-
-	err = c.Find(bson.M{"reference": reference}).One(&blog)
-
-	if err != nil {
-		log.Fatal(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	blog := blogRepository.Find(reference)
 
 	js, err := json.Marshal(blog)
 
