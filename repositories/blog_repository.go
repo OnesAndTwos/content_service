@@ -8,12 +8,12 @@ import (
 )
 
 // BlogRepository is a constructed repository
-type blogRepository struct {
+type BlogRepository struct {
 	C *mgo.Collection
 }
 
 // Find finds a Blog by reference
-func (b *blogRepository) Find(reference string) models.Blog {
+func (b *BlogRepository) Find(reference string) models.Blog {
 	blog := models.Blog{}
 
 	b.C.Find(bson.M{"reference": reference}).One(&blog)
@@ -22,7 +22,7 @@ func (b *blogRepository) Find(reference string) models.Blog {
 }
 
 // NewBlogRepository is the factory function that creates a blogRepository
-func NewBlogRepository() *blogRepository {
+func NewBlogRepository() *BlogRepository {
 	session, err := mgo.Dial("localhost")
 
 	if err != nil {
@@ -31,7 +31,7 @@ func NewBlogRepository() *blogRepository {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	return &blogRepository{
+	return &BlogRepository{
 		session.DB("content_service").C("Blogs"),
 	}
 }
