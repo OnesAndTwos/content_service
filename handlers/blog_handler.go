@@ -12,6 +12,7 @@ import (
 //BlogHandler handles GET requests for Blogs
 func BlogHandler(w http.ResponseWriter, r *http.Request) {
 	blogRepository := repositories.NewBlogRepository()
+	defer blogRepository.Close()
 
 	reference := mux.Vars(r)["reference"]
 

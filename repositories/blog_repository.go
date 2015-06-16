@@ -9,16 +9,27 @@ import (
 
 // BlogRepository is a constructed repository
 type BlogRepository struct {
-	C *mgo.Collection
+	s *mgo.Session
+	c *mgo.Collection
 }
 
 // Find finds a Blog by reference
 func (b *BlogRepository) Find(reference string) models.Blog {
 	blog := models.Blog{}
 
-	b.C.Find(bson.M{"reference": reference}).One(&blog)
+	b.c.Find(bson.M{"reference": reference}).One(&blog)
 
 	return blog
+}
+
+// Create allows the creation of a blog
+func (b *BlogRepository) Create(m *models.Blog) error {
+	return b.c.Insert(&m)
+}
+
+// Close releases all resources on the repository
+func (b *BlogRepository) Close() {
+	b.s.Close()
 }
 
 // NewBlogRepository is the factory function that creates a blogRepository
@@ -32,6 +43,6 @@ func NewBlogRepository() *BlogRepository {
 	session.SetMode(mgo.Monotonic, true)
 
 	return &BlogRepository{
-		session.DB("content_service").C("Blogs"),
+		session, session.DB("content_service").C("Blogs"),
 	}
 }
