@@ -1,8 +1,9 @@
 package main
 
 import (
-	"content_service/blogs"
 	"net/http"
+
+	"github.com/onesandtwos/content_service/blogs"
 
 	"github.com/gorilla/mux"
 )

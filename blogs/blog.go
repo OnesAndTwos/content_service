@@ -1,4 +1,4 @@
-package models
+package blogs
 
 // Blog represents a blog article
 type Blog struct {
