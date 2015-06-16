@@ -5,38 +5,31 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/onesandtwos/content_service/helpers"
 )
 
 //Creator handles POST requests to Blogs
-func Creator(w http.ResponseWriter, r *http.Request) {
-	blogRepository := NewRepository()
-	defer blogRepository.Close()
+func Creator(repository BlogRepository) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		blog := Blog{}
 
-	blog := Blog{}
+		bodyText, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	bodyText, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Fatal(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		err = json.Unmarshal([]byte(bodyText), &blog)
+		if err != nil {
+			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	err = json.Unmarshal([]byte(bodyText), &blog)
-	if err != nil {
-		log.Fatal(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		err = repository.Create(&blog)
 
-	err = blogRepository.Create(&blog)
-	if err != nil {
-		log.Fatal(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	js, _ := json.Marshal(blog)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+		helpers.WriteJSONResponse(w, blog, http.StatusOK)
+	})
 }
