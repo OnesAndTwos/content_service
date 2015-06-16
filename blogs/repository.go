@@ -1,21 +1,19 @@
-package repositories
+package blogs
 
 import (
-	"content_service/models"
-
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-// BlogRepository is a constructed repository
-type BlogRepository struct {
+// Repository is a constructed repository
+type Repository struct {
 	s *mgo.Session
 	c *mgo.Collection
 }
 
 // Find finds a Blog by reference
-func (b *BlogRepository) Find(reference string) models.Blog {
-	blog := models.Blog{}
+func (b *Repository) Find(reference string) Blog {
+	blog := Blog{}
 
 	b.c.Find(bson.M{"reference": reference}).One(&blog)
 
@@ -23,17 +21,17 @@ func (b *BlogRepository) Find(reference string) models.Blog {
 }
 
 // Create allows the creation of a blog
-func (b *BlogRepository) Create(m *models.Blog) error {
+func (b *Repository) Create(m *Blog) error {
 	return b.c.Insert(&m)
 }
 
 // Close releases all resources on the repository
-func (b *BlogRepository) Close() {
+func (b *Repository) Close() {
 	b.s.Close()
 }
 
-// NewBlogRepository is the factory function that creates a blogRepository
-func NewBlogRepository() *BlogRepository {
+// NewRepository is the factory function that creates a blogRepository
+func NewRepository() *Repository {
 	session, err := mgo.Dial("localhost")
 
 	if err != nil {
@@ -42,7 +40,7 @@ func NewBlogRepository() *BlogRepository {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	return &BlogRepository{
+	return &Repository{
 		session, session.DB("content_service").C("Blogs"),
 	}
 }
