@@ -1,7 +1,6 @@
-package handlers
+package blogs
 
 import (
-	"content_service/repositories"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -9,9 +8,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//BlogHandler handles GET requests for Blogs
-func BlogHandler(w http.ResponseWriter, r *http.Request) {
-	blogRepository := repositories.NewBlogRepository()
+//Handler handles GET requests for Blogs
+func Handler(w http.ResponseWriter, r *http.Request) {
+	blogRepository := NewRepository()
 	defer blogRepository.Close()
 
 	reference := mux.Vars(r)["reference"]

@@ -1,20 +1,18 @@
-package handlers
+package blogs
 
 import (
-	"content_service/models"
-	"content_service/repositories"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
-//BlogCreator handles POST requests to Blogs
-func BlogCreator(w http.ResponseWriter, r *http.Request) {
-	blogRepository := repositories.NewBlogRepository()
+//Creator handles POST requests to Blogs
+func Creator(w http.ResponseWriter, r *http.Request) {
+	blogRepository := NewRepository()
 	defer blogRepository.Close()
 
-	blog := models.Blog{}
+	blog := Blog{}
 
 	bodyText, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -31,7 +29,6 @@ func BlogCreator(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = blogRepository.Create(&blog)
-
 	if err != nil {
 		log.Fatal(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

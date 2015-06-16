@@ -1,7 +1,7 @@
 package main
 
 import (
-	"content_service/handlers"
+	"content_service/blogs"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -10,8 +10,8 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/blogs/{reference}", handlers.BlogHandler).Methods("GET").Name("GetBlog")
-	r.HandleFunc("/blogs", handlers.BlogCreator).Methods("POST").Name("CreateBlog")
+	r.HandleFunc("/blogs/{reference}", blogs.Handler).Methods("GET").Name("GetBlog")
+	r.HandleFunc("/blogs", blogs.Creator).Methods("POST").Name("CreateBlog")
 
 	http.ListenAndServe(":1234", r)
 }
